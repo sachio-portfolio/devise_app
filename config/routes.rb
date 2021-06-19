@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  devise_for :users
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  devise_for :users, controllers: {
+    registrations: 'users/registrations', sessions: 'users/sessions' }
   resources :blogs
   root 'blogs#index'
   if Rails.env.development?

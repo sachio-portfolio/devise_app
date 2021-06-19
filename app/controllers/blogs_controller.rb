@@ -13,7 +13,7 @@ class BlogsController < ApplicationController
 
   # GET /blogs/new
   def new
-    @blog = Blog.new
+      @blog = Blog.new
   end
 
   # GET /blogs/1/edit
@@ -23,15 +23,19 @@ class BlogsController < ApplicationController
   # POST /blogs or /blogs.json
   def create
     @blog = Blog.new(blog_params)
-
-    respond_to do |format|
-      if @blog.save
-        format.html { redirect_to @blog, notice: "Blog was successfully created." }
-        format.json { render :show, status: :created, location: @blog }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @blog.errors, status: :unprocessable_entity }
+    if current_user.try(:admin?)
+      respond_to do |format|
+        if @blog.save
+          format.html { redirect_to @blog, notice: "Blog was successfully created." }
+          format.json { render :show, status: :created, location: @blog }
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @blog.errors, status: :unprocessable_entity }
+        end
       end
+    else
+      render :new
+      flash[:alerm] = "管理者でない方は新規投稿できません"
     end
   end
 
